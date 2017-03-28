@@ -1,11 +1,11 @@
  {
-  "name": "axiomz",
-  "version": "1.0.2",
+  "name": "wptb-preface",
+  "version": "1.0.0",
   "homepage": "//zendgame.com",
   "authors": [
     "Bonnie Souter <bonnie@zendgame.com>"
   ],
-  "license": "MIT",
+  "license": "GPLv2",
   "private": true,
   "ignore": [
     "**/.*",

@@ -1,16 +1,15 @@
 {
-  "name": "axiomz",
-  "version": "1.0.2",
+  "name": "wptb-preface",
+  "version": "1.0.0",
   "author": "Bonnie Souter <bonnie@zendgame.com>",
   "homepage": "//zendgame.com",
   "repository": {
     "type": "git",
-    "url": "git://github.com/bonbons0220/axiomz.git"
+    "url": "git://github.com/bonbons0220/wptb-preface.git"
   },
   "licenses": [
     {
-      "type": "MIT",
-      "url": "http://opensource.org/licenses/MIT"
+      "type": "GPLv2",
     }
   ],
   "scripts": {
