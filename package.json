@@ -9,7 +9,7 @@
   },
   "licenses": [
     {
-      "type": "GPLv2",
+      "type": "GPLv2"
     }
   ],
   "scripts": {
@@ -22,6 +22,7 @@
     "bower": ">=1.7.7",
     "grunt": ">=0.4.0",
     "grunt-postcss": ">=0.7.0",
+    "es6-promise": ">=4.1.0",
     "pixrem": ">=3.0.0",
     "autoprefixer": ">=6.3.3",
     "grunt-cssnano": ">=2.0.1",

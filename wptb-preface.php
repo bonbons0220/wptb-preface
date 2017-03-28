@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Axiomz Core Plugin
+Plugin Name: WPTB-Preface Core Plugin
 Plugin URI: http://zendgame.ocm
-Description: The core plugin with Ajax capabilities
-Version: 1.0.2
+Description: Add Options page for textbook preface materials
+Version: 1.0.0
 Author: Bonnie Souter
 Author URI: http://zendgame.com
 License: GPLv2
@@ -29,7 +29,7 @@ License: GPLv2
  * Singleton class for setting up the plugin.
  *
  */
-final class Axiomz_Plugin {
+final class WPTB_Preface_Plugin {
 
 	public $dir_path = '';
 	public $dir_uri = '';
@@ -47,7 +47,7 @@ final class Axiomz_Plugin {
 		static $instance = null;
 
 		if ( is_null( $instance ) ) {
-			$instance = new Axiomz_Plugin;
+			$instance = new WPTB_Preface_Plugin;
 			$instance->setup();
 			$instance->includes();
 			$instance->setup_actions();
@@ -62,35 +62,41 @@ final class Axiomz_Plugin {
 	private function __construct() {
 		
 		//Add Scripts
-		//add_action( 'wp_enqueue_scripts', array( $this , 'register_axiomz_script' ) );
+		//add_action( 'wp_enqueue_scripts', array( $this , 'register_wptb_preface_script' ) );
 		
 		//Add Shortcodes
-		//add_shortcode( 'AXIOMZ' , array( $this , 'axiomz_shortcode' ) );
+		//add_shortcode( 'WPTBPREFACE' , array( $this , 'wptb_preface_shortcode' ) );
 		
 		//Add page(s) to the Admin Menu
-		add_action( 'admin_menu' , array( $this , 'bb_zx_menu' ) );
+		add_action( 'admin_menu' , array( $this , 'wptb_menu' ) );
 
 	}
 	
 	 /**
 	 * Add shortcodes menu
 	**/
-	function bb_zx_menu() {
+	function wptb_menu() {
 
-		// Add a submenu item and page to Tools 
-		add_management_page( 'Axiomz Tools Menu', 'Axiomz Tools Menu Title', 'export', 'bb-zx-tools-page' , array( $this , 'bb_zx_tools_page' ) );
+		// Add a main menu item and page Admin  Menu
+		add_menu_page( 'WP TextBook Options' , 'WP TextBook Options' , 'activate_plugins' , 'wptb-options' , array( $this , 'wptb_options_page' ) );
+		add_submenu_page( 'wptb-options' , 'WP TextBook Options' , 'Options' , 'wptb-options-page' , 'wptb-options-page' , 'wptb_options_page' );
 
 		// Add submenu items to other pages
+		
 		// Dashboard 
 		//add_dashboard_page( $page_title, $menu_title, $capability, $menu_slug, $function); 
+		
 		// Posts 
 		//add_posts_page( $page_title, $menu_title, $capability, $menu_slug, $function); 
+		
 		// Media 
 		//add_media_page( $page_title, $menu_title, $capability, $menu_slug, $function); 
 		// Pages 
 		//add_pages_page( $page_title, $menu_title, $capability, $menu_slug, $function); 
 		// Comments 
 		//add_comments_page( $page_title, $menu_title, $capability, $menu_slug, $function); 
+		// Tools
+		//add_management_page( $page_title, $menu_title, $capability, $menu_slug, $function); 
 		// Appearance 
 		//add_theme_page( $page_title, $menu_title, $capability, $menu_slug, $function); 
 		// Plugins 
@@ -101,33 +107,68 @@ final class Axiomz_Plugin {
 		//add_options_page( $page_title, $menu_title, $capability, $menu_slug, $function); 
 
 		// Add top level page to admin menu & add submenu item to it
-		//add_menu_page('Page title', 'Top-level menu title', 'manage_options', 'my-top-level-handle', 'my_magic_function');
-		//add_submenu_page( 'my-top-level-handle', 'Page title', 'Sub-menu title', 'manage_options', 'my-submenu-handle', 'my_magic_function');		
+		//add_menu_page( $page_title , $menu_title , $capability , $menu_slug , $function);
+		//add_submenu_page( $menu_slug, $page_title , $sub_menu_title , $capability , $sub_menu_slug, $function);
 		
 	}
 
 	/**
 	 * Add shortcodes page
 	**/
-	function bb_zx_tools_page() {
+	function wptb_html( $tag="" , $content="", $atr=array() , $self=false ) {
+		if ( empty( $tag ) ) return $content;
 		
-		if ( !current_user_can( 'export' ) )  {
+		$atts = "";
+		foreach ( $atr as $key=>$value ) {
+			$atts = "$key='$value' ";
+		}
+		$content = ( $self ) ? "<$tag $atts/>" : "<$tag $atts>$content</$tag>" ;
+		return $content;
+	}
+
+	/**
+	 * Add shortcodes page
+	**/
+	function wptb_options_page() {
+		
+		if ( !current_user_can( 'activate_plugins' ) )  {
 				wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 		}
-		echo '<div class="wrap">';
-		echo '<h2>Axiomz Toolz</h2>';
-		echo '</div>';	}
+
+		$page_title = 	$this->wptb_html( "h2" , "TextBook Options" );
+		
+		$title_row = $this->wptb_html( "tr" , 
+							$this->wptb_html( "th" , "TextBook Title" ) .
+							$this->wptb_html( "td" ,
+								$this->wptb_html( "h3" , get_bloginfo( "name" ) ) ) );
+		
+		$author_rows = $this->wptb_html( "tr" , 
+							$this->wptb_html( "th" , 
+								$this->wptb_html( "label" , "Author" , array( "for"=>"author1") ) .
+							$this->wptb_html( "td" ,
+								$this->wptb_html( "input" , "" , array( "type"=>"text" , "name"=>"author1" , "size"=>"60" ) , true ) ) ) );
+		
+		$form_table = 	$this->wptb_html( "form" , 
+							$this->wptb_html( "table" , $title_row . $author_rows , 
+							array( "class"=>"form-table" ) ) ) ;
+		
+		$result = $this->wptb_html( "div" , 
+									$page_title . 
+									$form_table , array( "class"=>"wrap" ) );
+		
+		echo $result;
+	}
 
 
 	//
-	function register_axiomz_script() {
+	function register_wptb_preface_script() {
 		
 		//Scripts to be Registered, but not enqueued
 		//This example requires jquery 
-		//wp_register_script( 'zz-script', $this->js_uri . "axiomz.js", array( 'jquery' ), '1.0.0', true );
+		//wp_register_script( 'zz-script', $this->js_uri . "wptb-preface.js", array( 'jquery' ), '1.0.0', true );
 		
 		//Styles to be Registered, but not enqueued
-		//wp_register_style( 'zz-style', $this->css_uri . "axiomz.css" );
+		//wp_register_style( 'zz-style', $this->css_uri . "wptb-preface.css" );
 		
 		//Scripts and Styles to be Enqueued on every page.
 		//wp_enqueue_script( 'zz-script' );
@@ -135,7 +176,7 @@ final class Axiomz_Plugin {
 
 	}
 
-	public function axiomz_shortcode( $atts, $content = null, $tagname = null ) {
+	public function wptb_preface_shortcode( $atts, $content = null, $tagname = null ) {
 
 		//Shortcode loads scripts and styles
 		//wp_enqueue_script( 'zz-script' );
@@ -150,28 +191,28 @@ final class Axiomz_Plugin {
 	 * Magic method to output a string if trying to use the object as a string.
 	 */
 	public function __toString() {
-		return 'axiomz';
+		return 'wptb_preface';
 	}
 
 	/**
 	 * Magic method to keep the object from being cloned.
 	 */
 	public function __clone() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Sorry, no can do.', 'axiomz' ), '1.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Sorry, no can do.', 'wptb_preface' ), '1.0' );
 	}
 
 	/**
 	 * Magic method to keep the object from being unserialized.
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Sorry, no can do.', 'axiomz' ), '1.0' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Sorry, no can do.', 'wptb_preface' ), '1.0' );
 	}
 
 	/**
 	 * Magic method to prevent a fatal error when calling a method that doesn't exist.
 	 */
 	public function __call( $method = '', $args = array() ) {
-		_doing_it_wrong( "Axiomz_Plugin::{$method}", esc_html__( 'Method does not exist.', 'axiomz' ), '1.0' );
+		_doing_it_wrong( "WPTB_Preface_Plugin::{$method}", esc_html__( 'Method does not exist.', 'wptb_preface' ), '1.0' );
 		unset( $method, $args );
 		return null;
 	}
@@ -244,12 +285,12 @@ final class Axiomz_Plugin {
 }
 
 /**
- * Gets the instance of the `Axiomz_Plugin` class.  This function is useful for quickly grabbing data
+ * Gets the instance of the `WPTB_Preface_Plugin` class.  This function is useful for quickly grabbing data
  * used throughout the plugin.
  */
-function axiomz_plugin() {
-	return Axiomz_Plugin::get_instance();
+function wptb_preface_plugin() {
+	return WPTB_Preface_Plugin::get_instance();
 }
 
 // Let's roll!
-axiomz_plugin();
+wptb_preface_plugin();
