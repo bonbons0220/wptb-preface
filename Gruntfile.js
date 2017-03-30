@@ -29,21 +29,11 @@ module.exports = function(grunt) {
 	//the task that compiles less
     less: {
       dev: {
-        files: {
-          'css/wptb-preface.css': [
-            'less/wptb-preface.less'
-          ]
-        },
         options: {
           compress: false
 		}
       },
       build: {
-        files: {
-          'css/wptb-preface.min.css': [
-            'less/wptb-preface.less'
-          ]
-        },
         options: {
           compress: true
         }
@@ -75,37 +65,7 @@ module.exports = function(grunt) {
       }
     },
 	
-	// task to postprocess css to add browser specific prefixes, like "-webkit-..." and minify css
-    postcss:{  
-		options: {
-			map: true,
-			processors: [
-				require('pixrem')(), // add fallbacks for rem units 
-				require('autoprefixer')({browsers: ['last 2 versions', 'ie 8', 'ie 9', 'android 2.3', 'android 4', 'opera 12']}),
-				require('cssnano')() // minify the result 
-			]
-		},
-		dev: {
-			options: {
-				  map: {
-					prev: 'css/'
-				  }
-			},
-			src: 'css/wptb-preface.css'
-		},
-		build: {
-			src: 'css/wptb-preface.min.css'
-		}
-	},
-
-
     watch: {
-      less: {
-        files: [
-          'less/wptb-preface.less'
-        ],
-        tasks: ['less:dev', 'postcss:dev']
-      },
       js: {
         files: [
           jsFileList,
@@ -125,13 +85,10 @@ module.exports = function(grunt) {
   ]);
   grunt.registerTask('dev', [
     'jshint',
-    'less:dev',
-    'postcss:dev',
     'concat'
   ]);
   grunt.registerTask('build', [
     'jshint',
-    'less:build',
     'postcss:build',
     'uglify'
   ]);
